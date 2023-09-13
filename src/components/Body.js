@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import RestCard from "./RestCard";
+import Shimmer from "./Shimmer";
 import resList from "../utilis/mockData";
+import { Link } from "react-router-dom";
 
 const Body = () => {
+  const [renderedList, setRenderedList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+  const [searchtext, setSearchtext] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -11,8 +15,11 @@ const Body = () => {
 
   const fetchData = async () => {
     const data = await fetch(
-      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=16.1808917&lng=81.1302716&page_type=DESKTOP_WEB_LISTING"
+      "https://www.swiggy.com/dapi/restaurants/list/v5?lat=17.4400802&lng=78.3489168&page_type=DESKTOP_WEB_LISTING"
     );
+
+    // mtm location
+    // lat=17.4400802&lng=78.3489168
 
     const json = await data.json();
 
@@ -21,27 +28,56 @@ const Body = () => {
         ?.restaurants;
 
     setFilteredList(rests);
+    setRenderedList(rests);
   };
 
-  return (
+  const handleFilterClick = () => {
+    const filteredRestaurants = renderedList.filter(
+      (restaurant) => restaurant.info.avgRating > 4
+    );
+    setFilteredList(filteredRestaurants);
+  };
+
+  return renderedList.length === 0 ? (
+    <Shimmer />
+  ) : (
     <div className="body">
-      <div className="search">search</div>
-      <button
-        className="filter-btn"
-        onClick={() => {
-          const filteredList =
-            filteredList &&
-            filteredList.filter((restaurant) => restaurant.info.avgRating > 4);
-          setFilteredList(filteredList);
-        }}
-      >
-        Click me
-      </button>
+      <div className="filter">
+        <div className="search">
+          <input
+            type="text"
+            className="search-box"
+            value={searchtext}
+            onChange={(e) => {
+              setSearchtext(e.target.value);
+            }}
+          />
+          <button
+            onClick={() => {
+              const searchfilteredList = renderedList.filter((restaurant) =>
+                restaurant.info.name
+                  .toLowerCase()
+                  .includes(searchtext.toLowerCase())
+              );
+              searchfilteredList.length
+                ? setFilteredList(searchfilteredList)
+                : setFilteredList(renderedList);
+            }}
+          >
+            search
+          </button>
+        </div>
+        <button className="filter-btn" onClick={handleFilterClick}>
+          Top rests
+        </button>
+      </div>
+
       <div className="res-container">
-        {filteredList &&
-          filteredList.map((restaurant) => (
+        {filteredList.map((restaurant) => (
+          <Link to={"/restaurants/" + restaurant.info.id}>
             <RestCard key={restaurant.info.id} resData={restaurant} />
-          ))}
+          </Link>
+        ))}
       </div>
     </div>
   );
