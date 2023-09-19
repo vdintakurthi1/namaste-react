@@ -1,26 +1,13 @@
-import { useEffect, useState } from "react";
-import { Menu_Url, CDN_URL } from "../utilis/constants";
+import { CDN_URL } from "../utilis/constants";
+import useRestmenu from "../utilis/useRestmenu";
 import { useParams } from "react-router-dom";
 
 const Restaurantmenu = () => {
-  const [restInfo, setRestInfo] = useState(null);
-
   const { resId } = useParams();
 
   let restaurantName, cloudinaryImageId, itemCards;
 
-  useEffect(() => {
-    fetchMenu();
-  }, []);
-
-  const fetchMenu = async () => {
-    const data = await fetch(Menu_Url + resId);
-
-    const json = await data.json();
-
-    setRestInfo(json.data);
-    console.log(json.data);
-  };
+  const restInfo = useRestmenu(resId);
 
   if (restInfo) {
     restaurantName = restInfo?.cards[0]?.card?.card?.info?.name;

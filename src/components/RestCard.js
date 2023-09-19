@@ -20,4 +20,15 @@ const RestCard = ({ resData }) => {
   );
 };
 
+export const RestCardWithLabel = () => {
+  return (props) => {
+    return (
+      <div>
+        <h2>Promoted</h2>
+        <RestCard {...props}></RestCard>
+      </div>
+    );
+  };
+};
+
 export default RestCard;

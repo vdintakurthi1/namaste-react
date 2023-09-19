@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import RestCard from "./RestCard";
+import RestCard, { RestCardWithLabel } from "./RestCard";
 import Shimmer from "./Shimmer";
 import resList from "../utilis/mockData";
 import { Link } from "react-router-dom";
@@ -8,6 +8,8 @@ const Body = () => {
   const [renderedList, setRenderedList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [searchtext, setSearchtext] = useState("");
+
+  const PromotedRestCard = RestCardWithLabel(RestCard);
 
   useEffect(() => {
     fetchData();
@@ -29,6 +31,7 @@ const Body = () => {
 
     setFilteredList(rests);
     setRenderedList(rests);
+    console.log(rests);
   };
 
   const handleFilterClick = () => {
@@ -75,7 +78,11 @@ const Body = () => {
       <div className="res-container">
         {filteredList.map((restaurant) => (
           <Link to={"/restaurants/" + restaurant.info.id}>
-            <RestCard key={restaurant.info.id} resData={restaurant} />
+            {restaurant.info.avgRating > 4.2 ? (
+              <PromotedRestCard key={restaurant.info.id} resData={restaurant} />
+            ) : (
+              <RestCard key={restaurant.info.id} resData={restaurant} />
+            )}
           </Link>
         ))}
       </div>

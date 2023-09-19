@@ -6,7 +6,7 @@ export const Header = () => {
   const [login, setLogin] = useState("login");
 
   return (
-    <div className="header">
+    <div className="header flex">
       <Link to="/">
         <img src={LOGO_URL}></img>
       </Link>
